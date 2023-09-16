@@ -1,6 +1,5 @@
 // !mdbgum
-const mongoose = require('mongoose'); // Erase if already required
-
+import mongoose from "mongoose";
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema({
     firstname:{
@@ -31,4 +30,5 @@ var userSchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model('User', userSchema);
+// module.exports = mongoose.model('User', userSchema); // yo export method common js method ho tei vayera kaam gardaina kina ki hamle es module use gareko xaaam import export garna.
+export default mongoose.model('User', userSchema);
