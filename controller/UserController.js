@@ -1,7 +1,6 @@
-import { model } from 'mongoose';
 import User from '../models/userModel'
 
-export const createUser = async (req, res) => {
+const createUser = async (req, res) => {
     const email = req.body.email;
     const findUser = await User.findOne(email);
     if(!findUser){
@@ -15,4 +14,4 @@ export const createUser = async (req, res) => {
     }
 };
 
-// model.exports={createUser};
+module.exports= { createUser };

@@ -3,7 +3,7 @@ import {dbConnect} from './config/dbConnect.js'
 const app = express();
 import dotenv from 'dotenv';
 dotenv.config();
-import { authRouter } from './routes/authRoute.js'
+import {authRouter} from './routes/authRoute.js'
 
 const PORT = process.env.PORT || 4000;
 
