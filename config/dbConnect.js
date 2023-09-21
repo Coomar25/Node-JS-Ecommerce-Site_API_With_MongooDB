@@ -1,8 +1,8 @@
-
 import dotenv from 'dotenv';
-dotenv.config();
 import mongoose from 'mongoose';
 
+
+dotenv.config();
 export const dbConnect = async () => {
     try{
         const mongodburi = process.env.MONGODB_URI;

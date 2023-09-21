@@ -5,7 +5,6 @@ import dotenv from 'dotenv';
 import {authRouter} from './routes/authRoute.js'
 
 
-
 const app = express();
 const PORT = process.env.PORT || 4000;
 dotenv.config();
@@ -14,13 +13,12 @@ dotenv.config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.listen(PORT, ()=> {
-    console.log(`server is running on port http://localhost:${PORT}`);
+    console.log(`server is listening on port http://localhost:${PORT}`);
 });
-
-// app.use("/", (req,res)=> {
-//     res.send("hello from server side");
-// });
 
 dbConnect();
 
 app.use('/api/user', authRouter);
+// app.use("/", (req,res)=> {
+//     res.send("hello from server side");
+// });
