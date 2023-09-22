@@ -31,8 +31,27 @@ var userSchema = new mongoose.Schema({
     isAdmin: {
         type:String,
         default: "user"
-    }
-});
+    },
+    cart: {
+        type: Array,
+        default: [],
+    },
+    address: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Address"
+    }],
+    wishlist: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product"
+    }]
+},
+
+{
+    timestamps:true,
+}
+
+
+);
 
 // Yo code chai password lai encrypt garna lai 
 userSchema.pre('save', async function(next){

@@ -100,13 +100,11 @@ export const updateUser = asyncHandler(async(req, res)=> {
 // login user
 export const userLogin = asyncHandler(async (req, res) => {
     const{email, password} = req.body;
-    // console.log(email, password);
-    // check if user exist or not 
     const findUser = await User.findOne({email});
     if(findUser && await findUser.isPasswordMatched(password)){
         // res.json(findUser);
         res.json({
-            // ?. syntax is called optional chaining introduced on ecma script 2020
+            // ?. syntax is called optional chaining introduced on ecma script in 2020
             _id :findUser?._id,
             firstname : findUser?.firstname,
             lastname : findUser?.lastname,
