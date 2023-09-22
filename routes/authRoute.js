@@ -6,14 +6,25 @@ import {getSingleUser} from '../controller/UserController.js'
 import {deleteSingleUser} from '../controller/UserController.js'
 import {updateUser} from '../controller/UserController.js'
 
+
+// create product
+import { createProduct } from "../controller/ProductController.js"; 
+import { authMiddleware } from "../middlewares/authMiddleware.js";
+import {isAdmin} from "../middlewares/authMiddleware.js";
+
+
+
 const router = express.Router();
 
 router.post('/register', createUser);
 router.post('/login', userLogin);
 router.get('/getallUser', getallUser);
-router.get('/getSingleUser/:id', getSingleUser);
+router.get('/getSingleUser/:id',authMiddleware,isAdmin, getSingleUser);
 router.delete('/deleteSingleUser/:id', deleteSingleUser );
 router.post('/updateUser/:id', updateUser);
+
+// product 
+router.post('/addProduct', createProduct);
 
 export { router as authRouter };
 

@@ -17,7 +17,6 @@ app.listen(PORT, ()=> {
 });
 
 dbConnect();
-
 app.use('/api/user', authRouter);
 // app.use("/", (req,res)=> {
 //     res.send("hello from server side");
