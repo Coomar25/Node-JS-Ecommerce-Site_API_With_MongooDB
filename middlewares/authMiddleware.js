@@ -4,10 +4,8 @@ import expressAsyncHandler from "express-async-handler"
 
 
 export const authMiddleware =  expressAsyncHandler( async (req, res, next)=> {
-
     let token;
     if(req?.headers?.authorization?.startsWith("Bearer")){
-
         token= req.headers.authorization.split(" ")[1];
         try{
             if(token){
@@ -28,5 +26,12 @@ export const authMiddleware =  expressAsyncHandler( async (req, res, next)=> {
 
 
 export const isAdmin = expressAsyncHandler(async(req, res, next)=> {
-        console.log(req.user);
+        // console.log(req.user); //you will get user from line 16
+        const {email} = req.user;
+        const adminUser = await User.findOne({email});
+        if(adminUser.isAdmin !== "admin"){
+            throw new Error("You are not authorized as a admin");
+        }else{
+            next();
+        }
 });

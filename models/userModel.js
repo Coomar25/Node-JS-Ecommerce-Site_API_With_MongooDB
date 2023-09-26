@@ -6,13 +6,13 @@ var userSchema = new mongoose.Schema({
     firstname:{
         type:String,
         required:true,
-        unique:true,
+        // unique:true,
         index:true,
     },
     lastname:{
         type:String,
         required:true,
-        unique:true,
+        // unique:true,
     },
     email:{
         type:String,
@@ -22,7 +22,7 @@ var userSchema = new mongoose.Schema({
     mobile:{
         type:String,
         required:true,
-        unique:true,
+        // unique:true,
     },
     password:{
         type:String,
@@ -31,6 +31,10 @@ var userSchema = new mongoose.Schema({
     isAdmin: {
         type:String,
         default: "user"
+    },
+    isBlocked: {
+        type: Boolean,
+        default: false
     },
     cart: {
         type: Array,
@@ -43,7 +47,10 @@ var userSchema = new mongoose.Schema({
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
-    }]
+    }],
+    refreshToken: {
+        type: String,
+    }
 },
 
 {

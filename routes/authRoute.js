@@ -5,13 +5,14 @@ import {getallUser} from '../controller/UserController.js'
 import {getSingleUser} from '../controller/UserController.js'
 import {deleteSingleUser} from '../controller/UserController.js'
 import {updateUser} from '../controller/UserController.js'
+import {blockUser} from '../controller/UserController.js'
+import { unblockUser } from "../controller/UserController.js";
 
 
 // create product
 import { createProduct } from "../controller/ProductController.js"; 
 import { authMiddleware } from "../middlewares/authMiddleware.js";
-import {isAdmin} from "../middlewares/authMiddleware.js";
-
+import { isAdmin } from "../middlewares/authMiddleware.js";
 
 
 const router = express.Router();
@@ -19,9 +20,13 @@ const router = express.Router();
 router.post('/register', createUser);
 router.post('/login', userLogin);
 router.get('/getallUser', getallUser);
-router.get('/getSingleUser/:id',authMiddleware,isAdmin, getSingleUser);
+router.get('/getSingleUser/:id', authMiddleware, isAdmin, getSingleUser);
 router.delete('/deleteSingleUser/:id', deleteSingleUser );
-router.post('/updateUser/:id', updateUser);
+router.post('/updateUser/:id', authMiddleware, updateUser);
+// user blocked and unblocked by admin
+router.put('/block-user/:id', authMiddleware, isAdmin, blockUser);
+router.put('/unblock-user/:id', authMiddleware, isAdmin, unblockUser);
+
 
 // product 
 router.post('/addProduct', createProduct);
