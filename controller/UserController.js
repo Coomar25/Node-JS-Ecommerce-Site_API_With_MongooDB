@@ -1,10 +1,23 @@
 import { generateToken } from "../config/jwtToken.js";
+import { generateRefreshToken } from "../config/refreshToken.js";
 import User from "../models/userModel.js"
 import asyncHandler from "express-async-handler"
+import { validateMangoDbId } from "../utils/validateMangoDbId.js";
+import { validationResult } from "express-validator";
 
 
 export const createUser = async (req, res) => {
     try {
+        // checcking validation error
+        const error = validationResult(req);
+        if(!error.isEmpty()){
+            return res.status(422).json({
+                message: "Validation Failed",
+                error: error.array(),
+                success: false
+            });
+        }
+
         const email = req.body.email;
         const existingUser = await User.findOne({ email: email });
         if (existingUser) {
@@ -100,8 +113,24 @@ export const updateUser = asyncHandler(async(req, res)=> {
 // login user
 export const userLogin = asyncHandler(async (req, res) => {
     const{email, password} = req.body;
+    // findUser variable include all the information of that user with that email.
     const findUser = await User.findOne({email});
+    // console.log(findUser);
     if(findUser && await findUser.isPasswordMatched(password)){
+        // for refreshing token we will be sending the user id
+        const refreshToken = await generateRefreshToken(findUser?.id);
+        const updateuser = await User.findByIdAndUpdate(findUser.id, 
+        {
+            refreshToken: refreshToken,
+        }, {
+            new:true
+        });
+
+        // ava store garam  token lai cookie ma
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: 72 * 60 * 60 * 1000,
+        })
         // res.json(findUser);
         res.json({
             // ?. syntax is called optional chaining introduced on ecma script in 2020
@@ -159,6 +188,89 @@ export const deleteSingleUser = asyncHandler(async(req, res) => {
         throw new Error(error);
     }
 });
+
+
+// export default blockUser = asyncHandler(async(req,res)=> {
+//         const {id} = req.params;
+//         try{
+//             const block = User.findByIdAndUpdate(
+//                 id,
+//                 {
+//                     isBlocked:true,
+//                 },
+//                 {
+//                     new: true,
+//                 }
+//             );
+//         }catch(error){
+//             throw new Error('error occured while blocking user');
+//         }
+// });
+
+
+
+
+
+
+
+
+export const blockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMangoDbId(id);
+    try {
+      const block = await User.findByIdAndUpdate(
+        id,
+        {
+          isBlocked: true,
+        },
+        {
+          new: true,
+        }
+      );
+      if (!block) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.status(200).json(block);
+    } catch (error) {
+      // Handle the error and send an error response
+      console.error(error);
+      res.status(500).json({ message: 'Error occurred while blocking user' });
+    }
+  });
+  
+
+
+
+export const unblockUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMangoDbId(id);
+  try {
+    const unblock = await User.findByIdAndUpdate(
+      id,
+      {
+        isBlocked: false,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!unblock) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(unblock);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error occurred while unblocking user' });
+  }
+});
+
+
+
+
+
+
+
+
 
 
 
