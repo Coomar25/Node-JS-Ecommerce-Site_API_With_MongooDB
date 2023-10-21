@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser } from '../controller/UserController.js';
+import { createUser, handleRefreshToken } from '../controller/UserController.js';
 import {userLogin} from '../controller/UserController.js';
 import {getallUser} from '../controller/UserController.js'
 import {getSingleUser} from '../controller/UserController.js'
@@ -7,6 +7,7 @@ import {deleteSingleUser} from '../controller/UserController.js'
 import {updateUser} from '../controller/UserController.js'
 import {blockUser} from '../controller/UserController.js'
 import { unblockUser } from "../controller/UserController.js";
+import { logout } from "../controller/UserController.js";
 
 
 // create product
@@ -26,6 +27,9 @@ router.post('/updateUser/:id', authMiddleware, updateUser);
 // user blocked and unblocked by admin
 router.put('/block-user/:id', authMiddleware, isAdmin, blockUser);
 router.put('/unblock-user/:id', authMiddleware, isAdmin, unblockUser);
+// handle refresh token
+router.get('/refresh', handleRefreshToken);
+router.get('/logout', logout);
 
 
 // product 
