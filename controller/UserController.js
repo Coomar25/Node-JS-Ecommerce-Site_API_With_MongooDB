@@ -17,7 +17,6 @@ export const createUser = async (req, res) => {
                 success: false
             });
         }
-
         const email = req.body.email;
         const existingUser = await User.findOne({ email: email });
         if (existingUser) {
@@ -44,6 +43,9 @@ export const createUser = async (req, res) => {
 
 // module.exports= { createUser };
 
+
+
+
 // update user
 export const updateUser = asyncHandler(async(req, res)=> {
     const {id} = req.params;
@@ -55,7 +57,6 @@ export const updateUser = asyncHandler(async(req, res)=> {
                 success: false
             });
         }
-
         userToUpdate.firstname = req.body.firstname || userToUpdate.firstname;
         userToUpdate.lastname = req.body.lastname || userToUpdate.lastname;
         userToUpdate.email = req.body.email || userToUpdate.email;
@@ -115,7 +116,6 @@ export const userLogin = asyncHandler(async (req, res) => {
     const{email, password} = req.body;
     // findUser variable include all the information of that user with that email.
     const findUser = await User.findOne({email});
-    // console.log(findUser);
     if(findUser && await findUser.isPasswordMatched(password)){
         // for refreshing token we will be sending the user id
         const refreshToken = await generateRefreshToken(findUser?.id);
@@ -125,7 +125,6 @@ export const userLogin = asyncHandler(async (req, res) => {
         }, {
             new:true
         });
-
         // ava store garam  token lai cookie ma
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
@@ -144,7 +143,58 @@ export const userLogin = asyncHandler(async (req, res) => {
     }else{
         throw new Error("Invalid Credentials");
     }
+}); 
+
+
+
+export const handleRefreshToken = asyncHandler(async (req, res)=> {
+    const cookie = req.cookies;
+    if(!cookie.refreshToken){
+        throw new Error("Refresh token not found");
+    };
+    const refreshToken = cookie.refreshToken;
+    console.log(refreshToken);
+    const user = await User.findOne({refreshToken: refreshToken});
+    if(!user){
+        throw new Error("User not found from a cookie");
+    }
+    Jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decode)=> {
+        if(err || user.id !==decode.id){
+            throw new Error('There is something wrong with refresh token');
+        }
+        const accessToken = generateToken(user?._id)
+        res.json(accessToken);
+    });
 });
+
+
+// logout functionality
+
+export const logout = asyncHandler(async(req, res)=> {
+    const cookie = req.cookies;
+    if(!cookie.refreshToken){
+        throw new Error("Refresh token not found");
+    };
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({refreshToken});
+    console.log(user);
+    if(!user){
+        res.clearCookie("refreshToken",{
+            httpOnly: true,
+            secure:true,
+        });
+        return res.status(204); //forbidden
+    }
+    await User.findOneAndUpdate({ _id: user._id }, {
+        refreshToken: "",
+    });
+    res.clearCookie("refreshToken",{
+        httpOnly: true,
+        secure:true,
+    });
+    return res.status(204).send("Logout successful");
+});
+
 
 
 // CRUD Operations
@@ -174,6 +224,8 @@ export const getSingleUser = asyncHandler(async(req,res)=> {
         throw new Error(error);
     }
 });
+
+
 
 // delete user
 
