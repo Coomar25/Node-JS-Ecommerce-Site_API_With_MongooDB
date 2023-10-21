@@ -116,9 +116,30 @@ export const getProductById = expressAsyncHandler(async(req, res)=> {
 // });
 
 
+
+// k hunxa vaane
+// For example, if you want to find all products with a price greater than $50, you might construct a query like this:
+// Product.find({ price: { $gt: 50 } }) // $gte = greater than or equal
+
+
 export const getAllProduct = expressAsyncHandler(async(req, res) => {
     try{
-        const allProduct = await Product.where("category").equals(req.query.category);
+        // fILTERING GAREKO
+        const queryObject = { ...req.query};
+        const excludeFields = ["page", "sort", "limit", "fileds"];
+        const queryObject2 = excludeFields.forEach((el) => delete queryObject[el]);
+        let queryString = JSON.stringify(queryObject);
+        queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+        const query = Product.find(JSON.parse(queryString));
+
+        // aaava shorting garne
+
+        
+
+
+
+
+        const allProduct = await query;
         res.json(allProduct);
     }catch(error){
         throw new Error(error);
