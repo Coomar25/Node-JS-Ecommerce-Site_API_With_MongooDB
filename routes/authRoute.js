@@ -8,6 +8,7 @@ import {updateUser} from '../controller/UserController.js'
 import {blockUser} from '../controller/UserController.js'
 import { unblockUser } from "../controller/UserController.js";
 import { logout } from "../controller/UserController.js";
+import { updatePassword } from "../controller/UserController.js";
 
 
 // create product
@@ -30,6 +31,8 @@ router.put('/unblock-user/:id', authMiddleware, isAdmin, unblockUser);
 // handle refresh token
 router.get('/refresh', handleRefreshToken);
 router.get('/logout', logout);
+
+router.put('/updatepassword', authMiddleware, updatePassword);
 
 
 // product 
