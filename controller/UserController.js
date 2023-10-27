@@ -6,6 +6,7 @@ import { validateMangoDbId } from "../utils/validateMangoDbId.js";
 import { validationResult } from "express-validator";
 import expressAsyncHandler from "express-async-handler";
 import { sendMail } from "./EmailController.js";
+import crypto from "crypto";
 
 
 export const createUser = async (req, res) => {
@@ -359,7 +360,7 @@ export const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
     try{
         const token = await user.createPasswordResetToken();
         await user.save();
-        const resetURL = `Click Here to reset password <a href = 'process.env.APP_URL/api/user/reset-password/${token}> Click Here </a> `;
+        const resetURL = `Click Here to reset password <a href = "${process.env.APP_URL}/api/user/reset-password/${token}"> Click Here </a> `;
         const data = {
             to: email,
             text: "hello User hey there",
@@ -373,6 +374,32 @@ export const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
     }
 });
 
+
+export const resetPassword = expressAsyncHandler(async(req, res)=> {
+    const { password } = req.body;
+    const { token } = req.params;
+    const hashedToken = crypto.createHash('sha256').update(token).digest("hex");
+
+    try{
+        const user = await User.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetExpires: { $gt: Date.now() },
+        });
+    
+        if(!user) throw new Error(" Token Expired, Please try again");
+    
+        user.password = password;
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save(user);
+        console.log("Password reset successful");
+        res.json({ message: "Password had been reset successfully" });
+
+    }catch(error){
+        res.status(500).json({error: "Password Reset Failed"})
+    }
+   
+});
 
 
 
