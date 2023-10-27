@@ -4,6 +4,8 @@ import User from "../models/userModel.js"
 import asyncHandler from "express-async-handler"
 import { validateMangoDbId } from "../utils/validateMangoDbId.js";
 import { validationResult } from "express-validator";
+import expressAsyncHandler from "express-async-handler";
+import { sendMail } from "./EmailController.js";
 
 
 export const createUser = async (req, res) => {
@@ -129,7 +131,7 @@ export const userLogin = asyncHandler(async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             maxAge: 72 * 60 * 60 * 1000,
-        })
+        });
         // res.json(findUser);
         res.json({
             // ?. syntax is called optional chaining introduced on ecma script in 2020
@@ -317,22 +319,60 @@ export const unblockUser = asyncHandler(async (req, res) => {
 });
 
 
+// export const updatePassword = asyncHandler(async (req, res) => {
+//     const { _id } = req.user;
+//     // console.log(req.user);
+//     const { password } = req.body;
+//     console.log(password);
+//     validateMangoDbId(_id);
+//     const user = await User.findById(_id);
+//     if(password){
+//         user.password = password;
+//         const updatedPassword =  await user.save();
+//         res.json(updatedPassword);
+//     }else{
+//         res.json(user);
+//     }
+
+// });
+
 export const updatePassword = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    // console.log(req.user);
-    const {password} = req.body.password;
-    console.log(password);
+    const newPassword = req.body.password; // Access the 'password' field from req.body
     validateMangoDbId(_id);
     const user = await User.findById(_id);
-    if(password){
-        user.password = password;
-        const updatedPassword =  await user.save();
-        res.json(updatedPassword);
-    }else{
+
+    if (newPassword) {
+        user.password = newPassword;
+        const updatedUser = await user.save();
+        res.json(updatedUser);
+    } else {
         res.json(user);
     }
-
 });
+
+
+export const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
+    const {email} = req.body;
+    const user = await User.findOne({email});
+    if(!user) throw new Error("User not found with this email");
+    try{
+        const token = await user.createPasswordResetToken();
+        await user.save();
+        const resetURL = `Click Here to reset password <a href = 'process.env.APP_URL/api/user/reset-password/${token}> Click Here </a> `;
+        const data = {
+            to: email,
+            text: "hello User hey there",
+            subject: "Forget Password Link",
+            htm: resetURL
+        };
+        sendMail(data);
+        res.json(token);
+    }catch(error){
+        throw new Error(error);
+    }
+});
+
 
 
 
