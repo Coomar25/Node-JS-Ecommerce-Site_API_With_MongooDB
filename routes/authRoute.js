@@ -9,6 +9,7 @@ import {blockUser} from '../controller/UserController.js'
 import { unblockUser } from "../controller/UserController.js";
 import { logout } from "../controller/UserController.js";
 import { updatePassword } from "../controller/UserController.js";
+import { forgetPasswordToken } from "../controller/UserController.js";
 
 
 // create product
@@ -33,6 +34,8 @@ router.get('/refresh', handleRefreshToken);
 router.get('/logout', logout);
 
 router.put('/updatepassword', authMiddleware, updatePassword);
+// forget password
+router.post('/forgetPasswordToken', forgetPasswordToken);
 
 
 // product 
