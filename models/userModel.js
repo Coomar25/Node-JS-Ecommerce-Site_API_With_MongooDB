@@ -52,7 +52,6 @@ var userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
     },
-
     passwordChangedAt:Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -79,6 +78,8 @@ userSchema.methods.isPasswordMatched =  async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);
 }
 
+
+// crypto use garya xa token lai
 userSchema.methods.createPasswordResetToken = async function(){
     const resetToken = crypto.randomBytes(32).toString("hex");
     this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest("hex");
