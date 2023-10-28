@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import dotenv from 'dotenv';
 import {authRouter} from './routes/authRoute.js'
 import {productRouter} from './routes/productRoute.js';
+import { blogROuter } from "./routes/blogRoute.js";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 
@@ -23,6 +24,7 @@ app.listen(PORT, ()=> {
 dbConnect();
 app.use('/api/user', authRouter);
 app.use('/api/product', productRouter);
+app.use('/api/blog', blogROuter);
 // app.use("/", (req,res)=> {
 //     res.send("hello from server side");
 // });
