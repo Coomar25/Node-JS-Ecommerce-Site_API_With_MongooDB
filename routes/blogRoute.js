@@ -8,7 +8,7 @@
 
 
 import express from "express";
-import { createBlog, updateBlog, getBlog, deleteBlog, getAllBlogs } from "../controller/BlogController.js";
+import { createBlog, updateBlog, getBlog, deleteBlog, getAllBlogs, likeBlog, dislikesBlog } from "../controller/BlogController.js";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 
 
@@ -20,6 +20,8 @@ blogROuter.put('/update-blog/:id', authMiddleware, isAdmin, updateBlog);
 blogROuter.get('/get-a-blog/:id', getBlog);
 blogROuter.get('/get-all-blog', getAllBlogs);
 blogROuter.delete('/delete-blog/:id', authMiddleware, isAdmin, deleteBlog);
+blogROuter.put('/like-blog', authMiddleware, likeBlog);
+blogROuter.put('/dislikes-blog',authMiddleware, dislikesBlog);
 
 export {blogROuter as blogROuter}
 
