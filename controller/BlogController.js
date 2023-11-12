@@ -32,7 +32,9 @@ export const updateBlog = expressAsyncHandler(async(req, res)=> {
 export const getBlog = expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
     try {
-        const blog = await Blog.findById(id);
+        const blog = await Blog.findById(id)
+        .populate("likes")
+        .populate("dislikes");
 
         if (blog) {
             blog.numViews++; // Increment numViews by 1
