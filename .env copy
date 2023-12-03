@@ -1,0 +1,12 @@
+APP_URL = http://localhost:5000
+
+PORT = 5000
+MONGODB_URI=mongodb+srv://username:password@cluster0.be1f7m6.mongodb.net/databasename
+JWT_SECRET=
+# JWT_SECRET = mysecret
+
+
+
+# mail
+MAIL_ID =
+MAIL_PASSWORD = 
