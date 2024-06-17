@@ -1,6 +1,6 @@
-import Category from "../models/categoryModel";
-
-export const createCategory = asyncHandler(async (req, res) => {
+import Category from "../models/categoryModel.js";
+import expressAsyncHandler from "express-async-handler";
+export const createCategory = expressAsyncHandler(async (req, res) => {
   try {
     const newCategory = await Category.create(req.body);
     res.json(newCategory);
@@ -8,7 +8,7 @@ export const createCategory = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-export const updateCategory = asyncHandler(async (req, res) => {
+export const updateCategory = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
@@ -20,7 +20,7 @@ export const updateCategory = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-export const deleteCategory = asyncHandler(async (req, res) => {
+export const deleteCategory = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
@@ -30,7 +30,7 @@ export const deleteCategory = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-export const getCategory = asyncHandler(async (req, res) => {
+export const getCategory = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
@@ -40,7 +40,7 @@ export const getCategory = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-export const getallCategory = asyncHandler(async (req, res) => {
+export const getallCategory = expressAsyncHandler(async (req, res) => {
   try {
     const getallCategory = await Category.find();
     res.json(getallCategory);
