@@ -20,6 +20,7 @@ productRouter.put("/:id", authMiddleware, isAdmin, updateProduct);
 productRouter.delete("/:id", authMiddleware, isAdmin, deleteProduct);
 productRouter.get("/getallproducts", getAllProduct);
 productRouter.get("/:id", getProductById);
+//Routes for Category
 productRouter.post("/category", authMiddleware, isAdmin, createCategory);
 productRouter.put("/category/:id", authMiddleware, isAdmin, updateCategory);
 productRouter.get("/category/:id", getCategory);
